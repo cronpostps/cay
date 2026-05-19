@@ -10,9 +10,32 @@ namespace Cay
         private List<MyKey> _buffer = new List<MyKey>();
         private string _lastOutput = "";
         private bool _bypassCurrentWord = false;
+        private List<MyKey> _savedBuffer = new List<MyKey>();
+        private string _savedOutput = "";
+        private bool _canRestore = false;
 
         public void ResetFull()
         {
+            _buffer.Clear();
+            _lastOutput = "";
+            _bypassCurrentWord = false;
+            _canRestore = false;
+            _savedBuffer.Clear();
+            _savedOutput = "";
+        }
+
+        private void CommitWord()
+        {
+            if (_buffer.Count > 0)
+            {
+                _savedBuffer = new List<MyKey>(_buffer);
+                _savedOutput = _lastOutput;
+                _canRestore = true;
+            }
+            else
+            {
+                _canRestore = false;
+            }
             _buffer.Clear();
             _lastOutput = "";
             _bypassCurrentWord = false;
@@ -36,12 +59,24 @@ namespace Cay
                     if (_buffer.Count == 0) UpdateScreen("");
                     else Run(ref e, true);
                 }
-                else ResetFull();
+                else if (_canRestore)
+                {
+                    // Restore the previous word state
+                    _buffer = new List<MyKey>(_savedBuffer);
+                    _lastOutput = _savedOutput;
+                    _canRestore = false;
+                    // Let the OS handle the Backspace to delete the Space/Punctuation on screen
+                }
+                else
+                {
+                    ResetFull();
+                }
                 return;
             }
 
             if (e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z)
             {
+                _canRestore = false; // Typing a new letter invalidates restore
                 bool isShift = (Control.ModifierKeys & Keys.Shift) != 0;
                 bool isCaps = InputInjector.IsCapsLockOn();
                 bool isUpper = isShift ^ isCaps;
@@ -50,6 +85,11 @@ namespace Cay
                 e.Handled = true;
                 e.SuppressKeyPress = true;
                 Run(ref e, false);
+            }
+            else if (e.KeyCode == Keys.Space || e.KeyCode == Keys.Enter || e.KeyCode == Keys.Oemcomma || e.KeyCode == Keys.OemPeriod)
+            {
+                // When typing space or basic punctuation, save the word state so Backspace can restore it
+                CommitWord();
             }
             else
             {
