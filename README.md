@@ -1,77 +1,103 @@
-# Cay — Bộ gõ Telex. Vậy thôi.
+# 🌶️ Cay — Bộ gõ tiếng Việt siêu nhỏ gọn
 
-> Tôi gõ Telex. Tại sao phải cài cả một bộ gõ hỗ trợ VNI, VIQR, 12 kiểu gõ, bảng điều khiển, cập nhật tự động, và đủ thứ tôi không bao giờ dùng?
->
-> Nên tôi tự làm cái này. Một file. Chạy được. Dùng hằng ngày.
+> Bộ gõ Telex tối giản dành cho Windows. Không cài đặt, không giao diện thừa, tập trung 100% vào tốc độ và trải nghiệm gõ.
 
-➡️ [**Cay.exe**](https://github.com/tctvn/cay/releases/download/cay/Cay.exe) — tải về, double-click, xong.
-
-> ⚠️ **Windows 64-bit** · **.NET Framework 4.8** (có sẵn trên Win 10/11)
-
----
-
-## Nó làm được gì
-
-- **28 KB** — nhỏ hơn một cái ảnh JPEG bình thường
-- **Không cài đặt** — không registry rác, không DLL lung tung, xóa file là hết
-- **Tự bật cùng Windows** — lần đầu chạy hỏi một lần, sau đó im
-- **Tự động nhận diện ngữ cảnh** — nhận diện chính xác hầu hết các trường hợp gõ tiếng Việt và tự động bỏ qua khi gõ tiếng Anh (code, email, phím tắt...), gõ tự nhiên không cần bận tâm chuyển chế độ.
-- **Ctrl+Shift** để tắt/bật nếu cần
+[![Release](https://img.shields.io/github/v/release/tctvn/cay?style=flat-square&color=FF4500)](https://github.com/tctvn/cay/releases)
+[![Size](https://img.shields.io/badge/size-28_KB-brightgreen?style=flat-square)](https://github.com/tctvn/cay/releases/download/cay/Cay.exe)
+[![Platform](https://img.shields.io/badge/platform-Windows-0078d7?style=flat-square)](https://github.com/tctvn/cay/releases)
+[![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
 ---
 
-## Telex
+Cay là bộ gõ tiếng Việt tối giản được thiết kế nhằm thay thế các bộ gõ cồng kềnh. Tập trung hoàn toàn vào sự tinh gọn, Cay chỉ hỗ trợ kiểu gõ Telex và hoạt động độc lập không cần cấu hình.
 
-### Nguyên âm
+➡️ [**Tải về Cay.exe (28 KB)**](https://github.com/tctvn/cay/releases/download/cay/Cay.exe)
 
-| Gõ | Ra | | Gõ | Ra |
-|----|----|-|----|-----|
-| `aa` | â | | `ow` | ơ |
-| `aw` | ă | | `uw` | ư |
-| `ee` | ê | | `dd` | đ |
-| `oo` | ô | | | |
-
-### Dấu thanh
-
-| Phím | Dấu |
-|------|-----|
-| `z` | xóa dấu |
-| `s` | sắc |
-| `f` | huyền |
-| `r` | hỏi |
-| `x` | ngã |
-| `j` | nặng |
-
-### Thực tế
-
-| Gõ | Ra |
-|----|----|
-| `xin chaof` | xin chào |
-| `truwowngf` | trường |
-| `nguwowif` | người |
-| `ddaats` | đất |
-| `hoas` | hóa |
-| `loading` | loading *(không đụng vào)* |
+> [!IMPORTANT]
+> **Yêu cầu hệ thống:** Windows 10 / 11 (64-bit). Đã tích hợp sẵn .NET Framework 4.8. (Đối với Windows 7 / 8, cần cài đặt thủ công .NET Framework 4.8).
 
 ---
 
-## Yêu cầu
+## ⚡ Triết lý thiết kế
 
-- Windows 7 / 8 / 10 / 11 — **64-bit**
-- .NET Framework 4.8 — có sẵn trên Win 10/11, [tải tại đây](https://dotnet.microsoft.com/download/dotnet-framework/net48) nếu dùng Win 7/8
+Cay hướng tới sự tối giản tối đa trong vận hành:
+
+- **Kích thước siêu nhỏ (28 KB):** Tải và chạy tức thì, sử dụng rất ít tài nguyên hệ thống.
+- **Không cài đặt:** 1 file thực thi duy nhất, không tạo file rác, không ghi đè Registry. Gỡ bỏ hoàn toàn bằng cách xóa file.
+- **Không tiến trình ngầm:** Không có dịch vụ chạy ẩn hoặc cập nhật ngầm làm chậm máy.
 
 ---
 
-## Cấu trúc code
+## 🚀 Tính năng chính
 
-```
+### 🧠 Tự động chuẩn chính tả (Smart Orthography)
+Tự động phân tích cấu trúc nguyên âm tiếng Việt để đặt dấu thanh chuẩn xác theo ngữ pháp. Hỗ trợ tự động dịch chuyển vị trí dấu tương ứng với cấu trúc từ (Ví dụ: `hoas` ➔ `hóa`, nhưng `hoans` ➔ `hoán`).
+
+### 🔌 Không cần cấu hình (Zero-Config)
+Hoạt động ngay sau khi mở mà không cần thiết lập bảng mã hay phím kích hoạt phức tạp.
+
+### 🌐 Tự động nhận diện ngữ cảnh (Context-Aware)
+Tự động nhận diện và tạm ngưng bộ gõ khi người dùng viết code, gõ mật khẩu, viết tiếng Anh hoặc sử dụng phím tắt, giúp hạn chế việc phải chuyển chế độ thủ công.
+
+### 🤫 Hoạt động ẩn
+Không có giao diện người dùng (UI) hay thông báo pop-up gây phân tâm. Lần đầu khởi chạy sẽ hỏi quyền tự động bật cùng Windows, sau đó hoạt động hoàn toàn ở chế độ nền.
+
+---
+
+## ⌨️ Quy tắc gõ Telex
+
+Hỗ trợ kiểu gõ Telex chuẩn:
+
+### Nguyên âm & Phụ âm kép
+
+| Tổ hợp phím | Kết quả | | Tổ hợp phím | Kết quả |
+| :--- | :--- | - | :--- | :--- |
+| `aa` | **â** | | `ow` | **ơ** |
+| `aw` | **ă** | | `uw` | **ư** |
+| `ee` | **ê** | | `dd` | **đ** |
+| `oo` | **ô** | | | |
+
+### Quy tắc dấu thanh
+
+| Phím gõ | Dấu thanh | Ví dụ | Kết quả |
+| :---: | :--- | :--- | :--- |
+| **`s`** | Sắc | `hoas` | **hóa** |
+| **`f`** | Huyền | `chaof` | **chào** |
+| **`r`** | Hỏi | `hoir` | **hỏi** |
+| **`x`** | Ngã | `ngax` | **ngã** |
+| **`j`** | Nặng | `nawjng` | **nặng** |
+| **`z`** | Xóa dấu | `hoasz` | **hoa** |
+
+### Ví dụ thực tế
+
+| Phím gõ | Kết quả hiển thị | Ghi chú |
+| :--- | :--- | :--- |
+| `xin chaof` | **xin chào** | Xử lý dấu huyền |
+| `truwowngf` | **trường** | Xử lý nguyên âm đôi & dấu |
+| `nguwowif` | **người** | Xử lý nguyên âm ba & dấu |
+| `ddaats` | **đất** | Xử lý phụ âm ghép và dấu sắc |
+| `loading` | **loading** | Tự động nhận diện từ tiếng Anh |
+
+*💡 Mẹo: Nhấn tổ hợp phím `Ctrl + Shift` bất kỳ lúc nào để bật hoặc tắt nhanh bộ gõ.*
+
+---
+
+## 🛠️ Kiến trúc hệ thống
+
+Cấu trúc thư mục mã nguồn dành cho nhà phát triển:
+
+```text
 src/
-├── Program.cs             # Khởi chạy, System Tray, phím tắt (Ctrl+Shift)
-├── CayEngine.cs           # Lõi bộ gõ: quản lý buffer, trạng thái gõ
-├── CayProcessor.cs        # Xử lý Telex: bỏ dấu, ghép vần, kiểm tra từ
-├── CayData.cs             # Dữ liệu bảng mã Telex & quy tắc tiếng Việt
-├── KeyboardHookManager.cs # Hook bàn phím cấp thấp (Low-level Hook)
-└── InputInjector.cs       # Gửi phím giả lập (Backspace, ký tự tiếng Việt)
+├── Program.cs             # Điểm khởi chạy, System Tray, Đăng ký phím tắt bật/tắt nhanh (Ctrl+Shift)
+├── CayEngine.cs           # Lõi xử lý chính: Quản lý bộ đệm (Buffer), theo dõi trạng thái gõ phím
+├── CayProcessor.cs        # Bộ phân tích Telex: Ghép vần, xử lý bỏ dấu, kiểm tra ngữ pháp tiếng Việt
+├── CayData.cs             # Cơ sở dữ liệu tĩnh: Định nghĩa bảng mã Telex & quy tắc chính tả
+├── KeyboardHookManager.cs # Low-level Keyboard Hook: Đánh chặn sự kiện bàn phím cấp thấp của Windows
+└── InputInjector.cs       # Giả lập nhập liệu: Gửi phím Backspace và chèn ký tự tiếng Việt mới
 ```
 
-MIT License
+---
+
+## 📝 Giấy phép
+
+Dự án được phân phối dưới giấy phép **MIT License**. Tự do sử dụng, chỉnh sửa và phân phối.
