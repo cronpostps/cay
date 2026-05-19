@@ -119,15 +119,13 @@ namespace Cay
 
             if (backspacesNeeded > 0)
             {
+                string dummy = "";
                 if (_lastOutput.Length > 0)
                 {
-                    // Send dummy char to overwrite Autocomplete selection
-                    char dummy = _lastOutput[_lastOutput.Length - 1];
-                    InputInjector.SendUnicodeString(dummy.ToString());
-                    // Delete dummy + needed characters
-                    InputInjector.SendBackspaces(backspacesNeeded + 1);
+                    dummy = "\u200D"; // Zero Width Joiner: breaks selection without triggering Chrome autocomplete
+                    backspacesNeeded++;
                 }
-                InputInjector.SendUnicodeString(textToType);
+                InputInjector.ReplaceText(dummy, backspacesNeeded, textToType);
             }
             else
             {

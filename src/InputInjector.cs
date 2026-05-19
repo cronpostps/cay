@@ -66,6 +66,50 @@ namespace CayIME
             SendInput((uint)(text.Length * 2), inputs, sizeof(INPUT));
         }
 
+        public static void ReplaceText(string dummy, int backspaces, string text)
+        {
+            int dummyLen = string.IsNullOrEmpty(dummy) ? 0 : dummy.Length;
+            int textLen = string.IsNullOrEmpty(text) ? 0 : text.Length;
+            int total = (dummyLen * 2) + (backspaces * 2) + (textLen * 2);
+
+            if (total == 0) return;
+
+            var inputs = stackalloc INPUT[total];
+            int idx = 0;
+
+            for (int i = 0; i < dummyLen; i++)
+            {
+                inputs[idx].type = INPUT_KEYBOARD;
+                inputs[idx].ki = new KEYBDINPUT { wScan = dummy[i], dwFlags = KEYEVENTF_UNICODE, dwExtraInfo = MAGIC_EXTRA_INFO };
+                idx++;
+                inputs[idx].type = INPUT_KEYBOARD;
+                inputs[idx].ki = new KEYBDINPUT { wScan = dummy[i], dwFlags = KEYEVENTF_UNICODE | KEYEVENTF_KEYUP, dwExtraInfo = MAGIC_EXTRA_INFO };
+                idx++;
+            }
+
+            for (int i = 0; i < backspaces; i++)
+            {
+                inputs[idx].type = INPUT_KEYBOARD;
+                inputs[idx].ki = new KEYBDINPUT { wVk = VK_BACK, dwFlags = 0, dwExtraInfo = MAGIC_EXTRA_INFO };
+                idx++;
+                inputs[idx].type = INPUT_KEYBOARD;
+                inputs[idx].ki = new KEYBDINPUT { wVk = VK_BACK, dwFlags = KEYEVENTF_KEYUP, dwExtraInfo = MAGIC_EXTRA_INFO };
+                idx++;
+            }
+
+            for (int i = 0; i < textLen; i++)
+            {
+                inputs[idx].type = INPUT_KEYBOARD;
+                inputs[idx].ki = new KEYBDINPUT { wScan = text[i], dwFlags = KEYEVENTF_UNICODE, dwExtraInfo = MAGIC_EXTRA_INFO };
+                idx++;
+                inputs[idx].type = INPUT_KEYBOARD;
+                inputs[idx].ki = new KEYBDINPUT { wScan = text[i], dwFlags = KEYEVENTF_UNICODE | KEYEVENTF_KEYUP, dwExtraInfo = MAGIC_EXTRA_INFO };
+                idx++;
+            }
+
+            SendInput((uint)total, inputs, sizeof(INPUT));
+        }
+
         public static bool IsKeyDown(Keys key) => (GetAsyncKeyState((int)key) & 0x8000) != 0;
         public static bool IsCapsLockOn() => (GetKeyState(0x14) & 1) != 0;
 
