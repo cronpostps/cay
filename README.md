@@ -15,7 +15,7 @@
 - **26 KB** — nhỏ hơn một cái ảnh JPEG bình thường
 - **Không cài đặt** — không registry rác, không DLL lung tung, xóa file là hết
 - **Tự bật cùng Windows** — lần đầu chạy hỏi một lần, sau đó im
-- **Tự nhận ra khi không phải tiếng Việt** — gõ `loading`, `ctrl+c`, tên file, địa chỉ email... bộ gõ tự nhận diện, không cần tắt tay
+- **Tự động nhận diện ngữ cảnh** — nhận diện chính xác hầu hết các trường hợp gõ tiếng Việt và tự động bỏ qua khi gõ tiếng Anh (code, email, phím tắt...), gõ tự nhiên không cần bận tâm chuyển chế độ.
 - **Ctrl+Shift** để tắt/bật nếu cần
 
 ---
