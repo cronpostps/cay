@@ -12,7 +12,7 @@
 
 ## Nó làm được gì
 
-- **26 KB** — nhỏ hơn một cái ảnh JPEG bình thường
+- **28 KB** — nhỏ hơn một cái ảnh JPEG bình thường
 - **Không cài đặt** — không registry rác, không DLL lung tung, xóa file là hết
 - **Tự bật cùng Windows** — lần đầu chạy hỏi một lần, sau đó im
 - **Tự động nhận diện ngữ cảnh** — nhận diện chính xác hầu hết các trường hợp gõ tiếng Việt và tự động bỏ qua khi gõ tiếng Anh (code, email, phím tắt...), gõ tự nhiên không cần bận tâm chuyển chế độ.

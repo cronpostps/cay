@@ -50,6 +50,8 @@ namespace Cay
 
         private string GetCleanRaw(string raw)
         {
+            int firstVowelIdx = FindFirstVowel(NormalizeForSyllable(raw));
+            
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < raw.Length; i++)
             {
@@ -60,9 +62,26 @@ namespace Cay
                     i += 2;
                     continue;
                 }
+
+                // Collapse tone undo sequences (e.g., 'rr' -> 'r', 'ss' -> 's') 
+                // ONLY if they appear after the first vowel.
+                if (firstVowelIdx >= 0 && i > firstVowelIdx && i < raw.Length - 1 && IsToneUndoSequence(raw, i))
+                {
+                    sb.Append(raw[i]);
+                    i++; // Skip the duplicate tone key
+                    continue;
+                }
+
                 sb.Append(raw[i]);
             }
             return sb.ToString();
+        }
+
+        private bool IsToneUndoSequence(string s, int index)
+        {
+            char first = char.ToLower(s[index]);
+            char second = char.ToLower(s[index + 1]);
+            return first == second && IsToneKey(first);
         }
 
         private string TransformTelex(string input)
