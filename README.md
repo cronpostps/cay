@@ -88,6 +88,9 @@ src/
 
 ---
 
-## 📝 Giấy phép
+## 📝 Giấy phép & Liên kết
 
-Dự án được phân phối dưới giấy phép **GNU General Public License v3.0 (GPL-3.0)**.
+Dự án được phân phối dưới giấy phép **GNU General Public License v3.0 (GPL-3.0)**. Chi tiết xem tại file [LICENSE](LICENSE).
+
+*   **Mã nguồn GitHub**: [https://github.com/tctvn/cay](https://github.com/tctvn/cay)
+*   **Trang phát hành (Releases)**: [https://github.com/tctvn/cay/releases](https://github.com/tctvn/cay/releases)
