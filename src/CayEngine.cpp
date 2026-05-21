@@ -103,6 +103,7 @@ void TelexEngine::CommitWord() {
 }
 
 void TelexEngine::UpdateScreen(const wchar_t* newOutput, int newOutputLen) {
+    // 1. Check if identical
     bool isIdentical = (_lastOutputLen == newOutputLen);
     if (isIdentical) {
         for (int i = 0; i < newOutputLen; i++) {
@@ -114,6 +115,7 @@ void TelexEngine::UpdateScreen(const wchar_t* newOutput, int newOutputLen) {
     }
     if (isIdentical) return;
 
+    // 2. Find common prefix
     int commonPrefixLen = 0;
     int minLen = _lastOutputLen < newOutputLen ? _lastOutputLen : newOutputLen;
     for (int i = 0; i < minLen; i++) {
@@ -124,15 +126,17 @@ void TelexEngine::UpdateScreen(const wchar_t* newOutput, int newOutputLen) {
         }
     }
 
-    // EXACT math. Do NOT add dummy compensation here. ReplaceText handles it.
+    // 3. Calculate exact diff without any dummy padding
     int backspacesNeeded = _lastOutputLen - commonPrefixLen;
     const wchar_t* textToType = newOutput + commonPrefixLen;
     int textToTypeLen = newOutputLen - commonPrefixLen;
 
+    // 4. Inject exact keystrokes
     if (backspacesNeeded > 0 || textToTypeLen > 0) {
         CayIME::InputInjector::ReplaceText(backspacesNeeded, textToType, textToTypeLen);
     }
 
+    // 5. Update state
     for (int i = 0; i < newOutputLen; i++) {
         _lastOutput[i] = newOutput[i];
     }
@@ -665,6 +669,15 @@ bool TelexEngine::ApplyToneMarks(int toneIndex) {
 // OnKeyDown – main entry point
 // ---------------------------------------------------------------------------
 void TelexEngine::OnKeyDown(CayIME::InputHookManager* sender, CayIME::HookKeyEventArgs& e) {
+    // 0. Reset state on Navigation or Control keys to prevent buffer desync
+    if (e.keyCode == VK_RETURN || e.keyCode == VK_TAB || e.keyCode == VK_ESCAPE ||
+       (e.keyCode >= VK_PRIOR && e.keyCode <= VK_DOWN)) { 
+        // VK_PRIOR (33) to VK_DOWN (40) covers PageUp, PageDown, End, Home, Left, Up, Right, Down
+        ResetState();
+        _canRestore = false;
+        return;
+    }
+
     DWORD vk = e.keyCode;
 
     // -----------------------------------------------------------------------
@@ -727,13 +740,11 @@ void TelexEngine::OnKeyDown(CayIME::InputHookManager* sender, CayIME::HookKeyEve
         if (_bufferCount > 0) CommitWord();
         else ResetFull();
         return;
-    }
 
-    // Reset state on Navigation or Enter/Tab keys to prevent buffer desync
-    if (e.keyCode == VK_RETURN || e.keyCode == VK_TAB || 
-       (e.keyCode >= VK_PRIOR && e.keyCode <= VK_DOWN)) { 
-        // VK_PRIOR (33) to VK_DOWN (40) covers PageUp, PageDown, End, Home, Left, Up, Right, Down
-        ResetState();
+    case VK_LEFT: case VK_RIGHT: case VK_UP: case VK_DOWN:
+    case VK_HOME: case VK_END:  case VK_PRIOR: case VK_NEXT:
+    case VK_DELETE:
+        ResetFull();
         return;
     }
 
