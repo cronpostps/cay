@@ -12,12 +12,6 @@ public:
     // Sends: [ZWJ dummy] + [backspaceCount x VK_BACK] + [newText characters]
     // all in a single SendInput call to prevent Chrome autocomplete races.
     static void ReplaceText(int backspaceCount, const wchar_t* newText, int newTextLen);
-
-    // Inject a single Unicode character.
-    static void SendChar(wchar_t ch);
-
-    // Inject a sequence of backspaces.
-    static void SendBackspaces(int count);
 };
 
 } // namespace CayIME

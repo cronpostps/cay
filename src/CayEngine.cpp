@@ -761,7 +761,7 @@ void TelexEngine::OnKeyDown(CayIME::InputHookManager* sender, CayIME::HookKeyEve
     // -----------------------------------------------------------------------
     if (_bufferCount >= MAX_BUFFER - 1 || _textLen >= MAX_BUFFER - 1) {
         ResetFull();
-        CayIME::InputInjector::SendChar(ch);
+        // Do NOT set e.handled = true here, let the OS handle the keystroke naturally
         return;
     }
 

@@ -84,30 +84,4 @@ void InputInjector::ReplaceText(int backspaceCount, const wchar_t* newText, int 
     SendInput((UINT)idx, inputs, sizeof(INPUT));
 }
 
-// ---------------------------------------------------------------------------
-// SendChar – inject a single Unicode character (two INPUT events).
-// ---------------------------------------------------------------------------
-void InputInjector::SendChar(wchar_t ch) {
-    INPUT inputs[2];
-    FillUnicodeInput(&inputs[0], ch, 0);
-    FillUnicodeInput(&inputs[1], ch, KEYEVENTF_KEYUP);
-    SendInput(2, inputs, sizeof(INPUT));
-}
-
-// ---------------------------------------------------------------------------
-// SendBackspaces – inject N backspace keypresses.
-// ---------------------------------------------------------------------------
-void InputInjector::SendBackspaces(int count) {
-    if (count <= 0) return;
-    if (count > 64) count = 64;
-
-    INPUT inputs[128]; // 64 * 2
-    int idx = 0;
-    for (int i = 0; i < count; i++) {
-        FillVkInput(&inputs[idx++], VK_BACK, 0);
-        FillVkInput(&inputs[idx++], VK_BACK, KEYEVENTF_KEYUP);
-    }
-    SendInput((UINT)idx, inputs, sizeof(INPUT));
-}
-
 } // namespace CayIME
