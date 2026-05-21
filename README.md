@@ -16,7 +16,7 @@ Bộ gõ Telex siêu nhẹ dành cho developer hệ tối giản. Tự động h
 - **Zero-CRT & No STL:** Được build hoàn toàn không phụ thuộc C-Runtime. Dung lượng file thực thi bị ép xuống mức cực hạn (~22KB), footprint RAM gần như bằng 0.
 - **No Heap Allocation:** Mọi buffer và mảng tra cứu (lookup tables) đều là `static const` và lưu tại read-only segment (`.rdata`). Không sử dụng cấp phát động (no `new`, no `malloc`).
 - **O(n) Structural Validator:** Loại bỏ hoàn toàn Regex trong việc phân tích âm tiết. Sử dụng kỹ thuật Pointer Walk để xác thực cấu trúc tiếng Việt `(Initial)?(Nucleus)(Final)?(Tail)?` với độ trễ micro-giây.
-- **Smart Exact Diffing & ZWJ Dummy Hack:** Tự động tính toán độ lệch chuỗi kết hợp chèn ký tự mồi (ZWJ) thông minh, **triệt tiêu hoàn toàn lỗi nuốt chữ/nhảy nháy trên Chrome Omnibox hay Excel Auto-complete** mà các bộ gõ khác (ngay cả UniKey) thường mắc phải. Gõ cực bốc, không độ trễ!
+- **Smart Exact Diffing & ZWJ Dummy Hack:** Tự động tính toán độ lệch chuỗi kết hợp chèn ký tự mồi (ZWJ) thông minh, **triệt tiêu hoàn toàn lỗi nuốt chữ/nhảy nháy trên Chrome Omnibox hay Excel Auto-complete** mà các bộ gõ khác thường mắc phải. Gõ cực bốc, không độ trễ!
 - **Auto Bypass (Hard Filter):** Tự động nhận diện từ tiếng Anh hoặc các chuỗi sai quy tắc chính tả ngay từ ký tự đầu tiên để bypass, nhường lại quyền gõ phím nguyên thủy cho developer mà không làm hỏng code.
 
 ## 🛠️ Build từ Source
