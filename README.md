@@ -22,7 +22,7 @@ Cay là bộ gõ tiếng Việt tối giản được thiết kế nhằm thay t
 
 Cay hướng tới sự tối giản tối đa trong vận hành:
 
-- **Siêu nhẹ, siêu tốc độ (189 KB):** Không chứa C-Runtime, thư viện động hay STL. Code thuần API Win32 giúp bộ gõ phản hồi nhanh nhất có thể.
+- **Siêu nhẹ, siêu tốc độ (19 KB):** Không chứa C-Runtime, thư viện động hay STL. Code thuần API Win32 giúp bộ gõ phản hồi nhanh nhất có thể.
 - **Không cài đặt:** 1 file thực thi duy nhất `cay.exe`. Tải về và chạy.
 - **Không tiến trình ngầm dư thừa:** Dịch vụ chạy ngầm được tối ưu bằng bitwise logic, không sử dụng string processing cồng kềnh.
 
