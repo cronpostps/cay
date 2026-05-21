@@ -40,48 +40,40 @@ static void FillVkInput(INPUT* inp, WORD vk, DWORD flags) {
 //   remaining       newText unicode pairs
 // ---------------------------------------------------------------------------
 void InputInjector::ReplaceText(int backspaceCount, const wchar_t* newText, int newTextLen) {
-    // Guard against impossible sizes.
-    if (backspaceCount < 0) backspaceCount = 0;
-    if (newTextLen      < 0) newTextLen      = 0;
+    if (backspaceCount <= 0 && newTextLen <= 0) return;
 
-    // CRITICAL FIX: The ZWJ dummy occupies one real character in the OS buffer.
-    // We must backspace over it in addition to the old text.
-    // This dummy wakes up the caret in Chrome Omnibox / Excel autocomplete.
-    // However, if we don't need to backspace anything (backspaceCount == 0),
-    // we MUST NOT insert a dummy, because some editors (like VS Code) drop ZWJ
-    // which causes the extra backspace to swallow a valid character!
+    // We MUST use the dummy to break RichText DOM bounds, which adds 1 to backspaces.
     bool useDummy = (backspaceCount > 0);
     int totalBs = backspaceCount + (useDummy ? 1 : 0);
 
-    // Total INPUT slots needed.
-    int total = (useDummy ? 2 : 0)  // ZWJ down + up
-              + totalBs * 2         // each BS needs keydown + keyup
-              + newTextLen * 2;     // each Unicode char needs keydown + keyup
+    // --- BATCH 1: DELETION (Dummy + Backspaces) ---
+    if (totalBs > 0) {
+        INPUT bsInputs[130]; 
+        int bsIdx = 0;
+        
+        if (useDummy) {
+            FillUnicodeInput(&bsInputs[bsIdx++], L'\u200D', 0);
+            FillUnicodeInput(&bsInputs[bsIdx++], L'\u200D', KEYEVENTF_KEYUP);
+        }
 
-    if (total > MAX_INPUTS) total = MAX_INPUTS; // hard clamp – should never happen
-
-    INPUT inputs[MAX_INPUTS];
-    int idx = 0;
-
-    // 1. Zero-Width Joiner dummy to wake up the target window caret.
-    if (useDummy) {
-        FillUnicodeInput(&inputs[idx++], L'\u200D', 0);               // ZWJ down
-        FillUnicodeInput(&inputs[idx++], L'\u200D', KEYEVENTF_KEYUP); // ZWJ up
+        for (int i = 0; i < totalBs && bsIdx + 1 < 130; i++) {
+            FillVkInput(&bsInputs[bsIdx++], VK_BACK, 0);
+            FillVkInput(&bsInputs[bsIdx++], VK_BACK, KEYEVENTF_KEYUP);
+        }
+        SendInput((UINT)bsIdx, bsInputs, sizeof(INPUT));
     }
 
-    // 2. Backspaces – erase the ZWJ + the old committed text.
-    for (int i = 0; i < totalBs && idx + 1 < MAX_INPUTS; i++) {
-        FillVkInput(&inputs[idx++], VK_BACK, 0);
-        FillVkInput(&inputs[idx++], VK_BACK, KEYEVENTF_KEYUP);
+    // --- BATCH 2: INSERTION (New Text) ---
+    if (newTextLen > 0) {
+        INPUT txtInputs[128];
+        int txtIdx = 0;
+        
+        for (int i = 0; i < newTextLen && txtIdx + 1 < 128; i++) {
+            FillUnicodeInput(&txtInputs[txtIdx++], newText[i], 0);
+            FillUnicodeInput(&txtInputs[txtIdx++], newText[i], KEYEVENTF_KEYUP);
+        }
+        SendInput((UINT)txtIdx, txtInputs, sizeof(INPUT));
     }
-
-    // 2. New text Unicode injection.
-    for (int i = 0; i < newTextLen && idx + 1 < MAX_INPUTS; i++) {
-        FillUnicodeInput(&inputs[idx++], newText[i], 0);
-        FillUnicodeInput(&inputs[idx++], newText[i], KEYEVENTF_KEYUP);
-    }
-
-    SendInput((UINT)idx, inputs, sizeof(INPUT));
 }
 
 } // namespace CayIME

@@ -103,7 +103,6 @@ void TelexEngine::CommitWord() {
 }
 
 void TelexEngine::UpdateScreen(const wchar_t* newOutput, int newOutputLen) {
-    // 1. Check if identical
     bool isIdentical = (_lastOutputLen == newOutputLen);
     if (isIdentical) {
         for (int i = 0; i < newOutputLen; i++) {
@@ -115,7 +114,6 @@ void TelexEngine::UpdateScreen(const wchar_t* newOutput, int newOutputLen) {
     }
     if (isIdentical) return;
 
-    // 2. Find common prefix
     int commonPrefixLen = 0;
     int minLen = _lastOutputLen < newOutputLen ? _lastOutputLen : newOutputLen;
     for (int i = 0; i < minLen; i++) {
@@ -126,17 +124,15 @@ void TelexEngine::UpdateScreen(const wchar_t* newOutput, int newOutputLen) {
         }
     }
 
-    // 3. Calculate exact diff without any dummy padding
+    // EXACT math. Do NOT add dummy compensation here. ReplaceText handles it.
     int backspacesNeeded = _lastOutputLen - commonPrefixLen;
     const wchar_t* textToType = newOutput + commonPrefixLen;
     int textToTypeLen = newOutputLen - commonPrefixLen;
 
-    // 4. Inject exact keystrokes
     if (backspacesNeeded > 0 || textToTypeLen > 0) {
         CayIME::InputInjector::ReplaceText(backspacesNeeded, textToType, textToTypeLen);
     }
 
-    // 5. Update state
     for (int i = 0; i < newOutputLen; i++) {
         _lastOutput[i] = newOutput[i];
     }
