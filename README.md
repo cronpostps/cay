@@ -1,27 +1,26 @@
-# 🌶️ Cay — Bộ Gõ Telex cho người hướng nội 😁
+# 🌶️ Cay — Bộ gõ Telex Minimalist
 
 [![Release](https://img.shields.io/github/v/release/tctvn/cay?style=flat-square&color=FF4500)](https://github.com/tctvn/cay/releases)
 [![Size](https://img.shields.io/badge/size-22_KB-brightgreen?style=flat-square)](https://github.com/tctvn/cay/releases/download/cay/cay.exe)
 [![Platform](https://img.shields.io/badge/platform-Windows-0078d7?style=flat-square)](https://github.com/tctvn/cay/releases)
 [![License](https://img.shields.io/badge/license-GPL--3.0-blue?style=flat-square)](LICENSE)
 
-Bộ gõ Telex siêu nhẹ dành cho developer hệ tối giản. Tự động hoàn toàn, đem lại trải nghiệm gõ tiếng Việt mượt mà "WOW" nhất có thể ngay từ cú click đầu tiên mà không cần chỉnh chọt bất kỳ config nào (Zero-config).
+Bộ gõ Telex siêu nhẹ, "plug-and-play" dành cho anh em developer hệ tối giản. Không config rườm rà, bật lên là gõ với trải nghiệm mượt mà, được thiết kế để hạn chế tối đa việc phá hỏng code hay lỗi vặt trên IDE.
 
 ➡️ [**Download cay.exe (22 KB)**](https://github.com/tctvn/cay/releases/download/cay/cay.exe)
 
 ---
 
-## ⚡ Technical Highlights
+## ✨ Features (Tính năng "ăn tiền")
 
-- **Zero-CRT & No STL:** Được build hoàn toàn không phụ thuộc C-Runtime. Dung lượng file thực thi bị ép xuống mức cực hạn (~22KB), footprint RAM gần như bằng 0.
-- **No Heap Allocation:** Mọi buffer và mảng tra cứu (lookup tables) đều là `static const` và lưu tại read-only segment (`.rdata`). Không sử dụng cấp phát động (no `new`, no `malloc`).
-- **O(n) Structural Validator:** Loại bỏ hoàn toàn Regex trong việc phân tích âm tiết. Sử dụng kỹ thuật Pointer Walk để xác thực cấu trúc tiếng Việt `(Initial)?(Nucleus)(Final)?(Tail)?` với độ trễ micro-giây.
-- **Smart Exact Diffing & Printable Dummy Hack:** Tự động tính toán độ lệch chuỗi kết hợp chèn ký tự mồi (tiêu chuẩn) thông minh, **triệt tiêu hoàn toàn lỗi nuốt chữ/nhảy nháy trên Chrome Omnibox, Excel Auto-complete hay GitHub/CodeMirror** mà các bộ gõ khác (ngay cả UniKey) thường mắc phải. Gõ cực bốc, không độ trễ!
-- **Auto Bypass (Hard Filter):** Tự động nhận diện từ tiếng Anh hoặc các chuỗi sai quy tắc chính tả ngay từ ký tự đầu tiên để bypass, nhường lại quyền gõ phím nguyên thủy cho developer mà không làm hỏng code.
+- **Siêu nhẹ & Sạch sẽ:** File thực thi chỉ vỏn vẹn ~22KB. Chạy độc lập, không phụ thuộc thư viện rườm rà, ngốn RAM gần như bằng 0.
+- **Không lỗi vặt:** Đã fix triệt để các bệnh nan y như lỗi nuốt chữ, nhảy nháy khi gõ trên thanh địa chỉ Chrome, thanh tìm kiếm VSCode hay GitHub/CodeMirror.
+- **Smart Bypass (Gõ code cực bốc):** Tự động nhận diện từ tiếng Anh hoặc các chuỗi sai quy tắc chính tả tiếng Việt để nhường lại quyền gõ phím nguyên thủy. Anh em cứ gõ code tiếng Anh vô tư mà không sợ bị bắt dấu sai lệch.
+- **Zero-config:** Không cần chỉnh bảng mã, không cần chọn kiểu gõ. Tải về là chạy, bật là gõ.
 
 ## 🛠️ Build từ Source
 
-Yêu cầu hệ thống: `CMake` và `MSVC`.
+Yêu cầu: Có sẵn `CMake` và `MSVC`.
 
 ```bash
 git clone https://github.com/tctvn/cay.git
@@ -29,15 +28,15 @@ cd cay
 cmake -B build
 cmake --build build --config Release
 ```
-*Output trả về nằm tại `build/Release/cay.exe`.*
+*File build xong sẽ nằm gọn tại `build/Release/cay.exe`.*
 
-## ⌨️ Sử dụng
+## ⌨️ Cách dùng
 
-- Chạy trực tiếp `cay.exe` (app chạy ngầm dưới System Tray).
-- Chuẩn Telex: `aa`=â, `oo`=ô, `ee`=ê, `dd`=đ, `w`=ă/ư/ơ.
+- Chạy file `cay.exe` (app sẽ chạy ngầm dưới khay hệ thống - System Tray).
+- Cú pháp chuẩn Telex: `aa`=â, `oo`=ô, `ee`=ê, `dd`=đ, `w`=ă/ư/ơ.
 - Dấu: `s`=sắc, `f`=huyền, `r`=hỏi, `x`=ngã, `j`=nặng, `z`=xoá dấu.
-- **Bật/Tắt nhanh:** `Ctrl + Shift`.
+- **Phím tắt Bật/Tắt:** `Ctrl + Shift`.
 
-## 📜 License & Links
+## 📜 License
 [GPL-3.0 License](LICENSE) © [tctvn](https://github.com/tctvn/cay).
 Mã nguồn: [GitHub Repository](https://github.com/tctvn/cay).
