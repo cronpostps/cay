@@ -162,8 +162,7 @@ void OnKeyDownHook(CayIME::InputHookManager* sender, CayIME::HookKeyEventArgs& e
     if (e.extraInfo == CayIME::InputInjector::MAGIC_EXTRA_INFO) return;
 
     if (e.keyCode == VK_LCONTROL || e.keyCode == VK_RCONTROL) {
-        g_ctrl = true; 
-        // Bỏ lệnh ResetFull() ở đây để RAM không bị xóa mất, phục vụ cho Ctrl + Z
+        g_ctrl = true;
         return;
     }
     if (e.keyCode == VK_LWIN || e.keyCode == VK_RWIN) {
