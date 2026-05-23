@@ -2,17 +2,18 @@
 setlocal enabledelayedexpansion
 
 :: ==========================================
-:: 1. CẤU HÌNH PHIÊN BẢN (Sửa ở đây khi cập nhật)
+:: 1. CẤU HÌNH (Sửa VERSION ở đây khi cập nhật)
 :: ==========================================
 set VERSION=v1.0.0
+set REPO=cronpostps/cay
 
 echo ===================================================
-echo     CAY ENGINE - PUSH ^& RELEASE TO GITHUB
-echo     Phien ban: %VERSION%
-echo     Repo: cronpostps/cay
+echo     CAY ENGINE - PUSH ^& ROLLING RELEASE
+echo     Phien ban hien tai: %VERSION%
+echo     Target: github.com/%REPO%/releases/tag/latest
 echo ===================================================
 
-:: 2. Tự động lấy nội dung Commit hoặc nhập tay
+:: 2. Nhập nội dung Commit
 set /p COMMIT_MSG="Nhap Commit (Enter de dung mac dinh): "
 if "%COMMIT_MSG%"=="" set COMMIT_MSG=Release %VERSION% - Toi uu hoa code va fix bug
 
@@ -24,7 +25,8 @@ git push
 
 echo.
 echo [2/3] Dong goi file Release (.zip)...
-set ZIP_NAME=CayEngine_%VERSION%.zip
+:: Đặt tên file ZIP cố định để link tải luôn là một
+set ZIP_NAME=CayEngine_latest.zip
 if exist temp_release rmdir /s /q temp_release
 mkdir temp_release
 copy "build\Release\cay.exe" temp_release\ >nul
@@ -33,8 +35,22 @@ if exist "build\Release\cay_macros.txt" copy "build\Release\cay_macros.txt" temp
 powershell -Command "Compress-Archive -Path 'temp_release\*' -DestinationPath '%ZIP_NAME%' -Force"
 
 echo.
-echo [3/3] Up Release len GitHub...
-gh release create %VERSION% "%ZIP_NAME%" --title "Cay Engine %VERSION%" --notes "%COMMIT_MSG%"
+echo [3/3] Up Release vao tag 'latest'...
+:: Xóa bản release 'latest' cũ trên GitHub (ẩn thông báo lỗi nếu chưa có)
+gh release delete latest --cleanup-tag -y --repo %REPO% >nul 2>&1
+
+:: Tạo release 'latest' mới, gắn tiêu đề là phiên bản hiện tại
+gh release create latest "%ZIP_NAME%" --repo %REPO% --title "Cay Engine %VERSION%" --notes "%COMMIT_MSG%" --latest
+
+:: Chốt chặn an toàn
+if %errorlevel% neq 0 (
+    echo.
+    echo [LOI] Up Release that bai! Vui long doc thong bao loi cua GitHub o tren.
+    echo File zip van an toan nam o thu muc nay: %ZIP_NAME%
+    rmdir /s /q temp_release
+    pause
+    exit /b
+)
 
 echo.
 echo [4/4] Don dep hien truong...
@@ -44,5 +60,7 @@ if exist "%ZIP_NAME%" del "%ZIP_NAME%"
 echo.
 echo ===================================================
 echo [THANH CONG] Moi thu da len mây sach se!
+echo Link tai truc tiep luon luon la:
+echo https://github.com/%REPO%/releases/download/latest/%ZIP_NAME%
 echo ===================================================
 pause
