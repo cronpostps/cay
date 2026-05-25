@@ -1,7 +1,7 @@
 #pragma once
 #include <windows.h>
 
-namespace CayIME {
+namespace ChanhIME {
 
 class InputInjector {
 public:
@@ -14,4 +14,4 @@ public:
     static void ReplaceText(int backspaceCount, const wchar_t* newText, int newTextLen);
 };
 
-} // namespace CayIME
+} // namespace ChanhIME

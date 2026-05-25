@@ -30,7 +30,7 @@ MacroManager::MacroManager() {
     GetModuleFileNameW(NULL, path, MAX_PATH);
     std::wstring exePath(path);
     size_t pos = exePath.find_last_of(L"\\/");
-    m_filePath = exePath.substr(0, pos) + L"\\cay_macros.txt";
+    m_filePath = exePath.substr(0, pos) + L"\\chanh_macros.txt";
 
     LoadFromFile();
 
@@ -86,7 +86,7 @@ bool MacroManager::ProcessChar(wchar_t ch) {
         
         if (it != m_macros.end()) {
             int bsCount = (int)len - 1;
-            CayIME::InputInjector::ReplaceText(bsCount, it->second.c_str(), (int)it->second.length());
+            ChanhIME::InputInjector::ReplaceText(bsCount, it->second.c_str(), (int)it->second.length());
             ResetBuffer();
             return true;
         }

@@ -1,4 +1,4 @@
-#include "CayData.h"
+#include "ChanhData.h"
 
 // ============================================================================
 // NOTE: All arrays below are declared `static const` so that they reside in
@@ -6,7 +6,7 @@
 // wWinMain is entered – critical for No-CRT builds (RULE 2).
 // ============================================================================
 
-namespace Cay {
+namespace Chanh {
 
 // ---------------------------------------------------------------------------
 // SECTION 1: Initial consonant validation table
@@ -82,7 +82,7 @@ static const wchar_t s_toneY[6] = { L'y', L'\u1EF3', L'\u00FD', L'\u1EF7', L'\u1
 // ---------------------------------------------------------------------------
 // IsValidInitial
 // ---------------------------------------------------------------------------
-bool CayData::IsValidInitial(const wchar_t* s, int len) {
+bool ChanhData::IsValidInitial(const wchar_t* s, int len) {
     if (!s || len <= 0) return false;
     for (int i = 0; i < s_initialsCount; i++) {
         if ((int)lstrlenW(s_initials[i]) == len &&
@@ -96,7 +96,7 @@ bool CayData::IsValidInitial(const wchar_t* s, int len) {
 // ---------------------------------------------------------------------------
 // IsValidNucleus
 // ---------------------------------------------------------------------------
-bool CayData::IsValidNucleus(const wchar_t* s, int len) {
+bool ChanhData::IsValidNucleus(const wchar_t* s, int len) {
     if (!s || len <= 0) return false;
     for (int i = 0; i < s_nucleiCount; i++) {
         int nlen = (int)lstrlenW(s_nuclei[i]);
@@ -111,7 +111,7 @@ bool CayData::IsValidNucleus(const wchar_t* s, int len) {
 // GetToneIndex
 // Maps Telex tone keys to indices 0–5; returns -1 for non-tone keys.
 // ---------------------------------------------------------------------------
-int CayData::GetToneIndex(wchar_t key) {
+int ChanhData::GetToneIndex(wchar_t key) {
     switch (key) {
     case L'z': case L'Z': return 0; // Xóa dấu  (flat)
     case L'f': case L'F': return 1; // Huyền
@@ -128,7 +128,7 @@ int CayData::GetToneIndex(wchar_t key) {
 // Returns the tone-marked Unicode codepoint for (base vowel, tone index).
 // base is the plain or already-hooked vowel character.
 // ---------------------------------------------------------------------------
-wchar_t CayData::GetToneMark(wchar_t base, int toneIndex) {
+wchar_t ChanhData::GetToneMark(wchar_t base, int toneIndex) {
     if (toneIndex < 0 || toneIndex > 5) return 0;
 
     switch (base) {
@@ -211,7 +211,7 @@ wchar_t CayData::GetToneMark(wchar_t base, int toneIndex) {
     }
 }
 
-wchar_t CayData::GetHookRule(wchar_t c) {
+wchar_t ChanhData::GetHookRule(wchar_t c) {
     switch (c) {
         case L'a': return L'\u0103'; // ă
         case L'o': return L'\u01a1'; // ơ
@@ -228,7 +228,7 @@ wchar_t CayData::GetHookRule(wchar_t c) {
 // ---------------------------------------------------------------------------
 // HasVietnameseMark (single character)
 // ---------------------------------------------------------------------------
-bool CayData::HasVietnameseMark(wchar_t ch) {
+bool ChanhData::HasVietnameseMark(wchar_t ch) {
     if (ch < 0x00C0) return false;
     // If stripping tone and accent changes the character, it has a mark.
     wchar_t base = StripAccent(StripTone(ch));
@@ -238,7 +238,7 @@ bool CayData::HasVietnameseMark(wchar_t ch) {
 // ---------------------------------------------------------------------------
 // HasVietnameseMark (buffer)
 // ---------------------------------------------------------------------------
-bool CayData::HasVietnameseMark(const wchar_t* buf, int len) {
+bool ChanhData::HasVietnameseMark(const wchar_t* buf, int len) {
     for (int i = 0; i < len; i++) {
         if (HasVietnameseMark(buf[i])) return true;
     }
@@ -248,7 +248,7 @@ bool CayData::HasVietnameseMark(const wchar_t* buf, int len) {
 // ---------------------------------------------------------------------------
 // StripTone – removes the tone mark from a vowel, keeps hook/breve.
 // ---------------------------------------------------------------------------
-wchar_t CayData::StripTone(wchar_t ch) {
+wchar_t ChanhData::StripTone(wchar_t ch) {
     switch (ch) {
         case L'\u00E0': case L'\u00E1': case L'\u1EA3': case L'\u00E3': case L'\u1EA1': return L'a';
         case L'\u00C0': case L'\u00C1': case L'\u1EA2': case L'\u00C3': case L'\u1EA0': return L'A';
@@ -281,7 +281,7 @@ wchar_t CayData::StripTone(wchar_t ch) {
 // ---------------------------------------------------------------------------
 // StripAccent – removes hook or circumflex/breve, returns plain ASCII vowel.
 // ---------------------------------------------------------------------------
-wchar_t CayData::StripAccent(wchar_t ch) {
+wchar_t ChanhData::StripAccent(wchar_t ch) {
     switch (ch) {
     case L'\u00E2': case L'\u0103': return L'a'; // â ă -> a
     case L'\u00C2': case L'\u0102': return L'A'; // Â Ă -> A
@@ -315,7 +315,7 @@ wchar_t CayData::StripAccent(wchar_t ch) {
 // ---------------------------------------------------------------------------
 // IsVowel – true for any plain or accented Vietnamese vowel.
 // ---------------------------------------------------------------------------
-bool CayData::IsVowel(wchar_t ch) {
+bool ChanhData::IsVowel(wchar_t ch) {
     wchar_t base = StripAccent(StripTone(ch));
     switch (base) {
     case L'a': case L'A':
@@ -330,4 +330,4 @@ bool CayData::IsVowel(wchar_t ch) {
     }
 }
 
-} // namespace Cay
+} // namespace Chanh

@@ -2,7 +2,7 @@
 #include <windows.h>
 #include "InputInjector.h"
 
-namespace CayIME {
+namespace ChanhIME {
 
 // ---------------------------------------------------------------------------
 // HookKeyEventArgs – passed to key-event callbacks.
@@ -52,4 +52,4 @@ private:
     static InputHookManager* s_instance;
 };
 
-} // namespace CayIME
+} // namespace ChanhIME

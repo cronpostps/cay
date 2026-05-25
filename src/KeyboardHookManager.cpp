@@ -1,6 +1,6 @@
 #include "KeyboardHookManager.h"
 
-namespace CayIME {
+namespace ChanhIME {
 
 // Static singleton pointer.
 InputHookManager* InputHookManager::s_instance = nullptr;
@@ -123,4 +123,4 @@ LRESULT CALLBACK InputHookManager::MouseProc(int nCode, WPARAM wParam, LPARAM lP
     return CallNextHookEx(nullptr, nCode, wParam, lParam);
 }
 
-} // namespace CayIME
+} // namespace ChanhIME

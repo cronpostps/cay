@@ -1,8 +1,8 @@
-#include "CayEngine.h"
+#include "ChanhEngine.h"
 extern bool g_normalizeTone;
 extern bool g_shortcutW; // Thêm dòng này
 // ============================================================================
-// CayEngine.cpp  –  Free-style Telex state machine (RULE 3)
+// ChanhEngine.cpp  –  Free-style Telex state machine (RULE 3)
 //
 // Architecture overview
 // ---------------------
@@ -20,7 +20,7 @@ extern bool g_shortcutW; // Thêm dòng này
 // After every mutation the updated _text is injected via InputInjector::ReplaceText.
 // ============================================================================
 
-namespace Cay {
+namespace Chanh {
 
 // ---------------------------------------------------------------------------
 // Static helpers
@@ -134,7 +134,7 @@ void TelexEngine::UpdateScreen(const wchar_t* newOutput, int newOutputLen) {
 
     // 4. Inject exact keystrokes
     if (backspacesNeeded > 0 || textToTypeLen > 0) {
-        CayIME::InputInjector::ReplaceText(backspacesNeeded, textToType, textToTypeLen);
+        ChanhIME::InputInjector::ReplaceText(backspacesNeeded, textToType, textToTypeLen);
     }
 
     // 5. Update state
@@ -251,7 +251,7 @@ static bool IsCompleteSyllable(const wchar_t* s, int len) {
     // Special case for "gi": if the remaining part does NOT start with a vowel
     // (e.g. "gì", "gìn", "gíp"), it means 'i' is actually the nucleus.
     if (matchedInitial && matchedInitial[0] == L'g' && matchedInitial[1] == L'i' && matchedInitial[2] == L'\0') {
-        if (pos == end || !CayData::IsVowel(CayData::StripTone(*pos))) {
+        if (pos == end || !ChanhData::IsVowel(ChanhData::StripTone(*pos))) {
             pos--; // Roll back 1 character so 'i' becomes the nucleus
         }
     }
@@ -300,7 +300,7 @@ static bool IsCompleteSyllable(const wchar_t* s, int len) {
 // Vietnamese transformation.
 // ---------------------------------------------------------------------------
 bool TelexEngine::ShouldBypassWord() const {
-    if (CayData::HasVietnameseMark(_text, _textLen)) return false;
+    if (ChanhData::HasVietnameseMark(_text, _textLen)) return false;
     if (_bufferCount == 0) return false;
 
     // Trích xuất các phím gốc đã gõ (chuyển về chữ thường để dễ check)
@@ -332,13 +332,13 @@ bool TelexEngine::ShouldBypassWord() const {
     // LEVEL 2: Structural Validator
     bool hasVowel = false;
     for (int i = 0; i < _textLen; i++) {
-        if (CayData::IsVowel(_text[i])) { hasVowel = true; break; }
+        if (ChanhData::IsVowel(_text[i])) { hasVowel = true; break; }
     }
     
     if (hasVowel) {
         wchar_t textLo[MAX_BUFFER];
         for (int i = 0; i < _textLen; i++) {
-            textLo[i] = ToLowerViet(CayData::StripTone(_text[i]));
+            textLo[i] = ToLowerViet(ChanhData::StripTone(_text[i]));
         }
         textLo[_textLen] = L'\0';
         
@@ -361,7 +361,7 @@ int TelexEngine::FindTonePosition() const {
     // Collect vowel positions.
     int first = -1, last = -1, count = 0;
     for (int i = 0; i < _textLen; i++) {
-        if (CayData::IsVowel(_text[i])) {
+        if (ChanhData::IsVowel(_text[i])) {
             if (first == -1) first = i;
             last = i;
             count++;
@@ -373,7 +373,7 @@ int TelexEngine::FindTonePosition() const {
     // Does a consonant follow the last vowel?
     bool hasConsonantFinal = false;
     for (int i = last + 1; i < _textLen; i++) {
-        if (IsAlpha(_text[i]) && !CayData::IsVowel(_text[i])) {
+        if (IsAlpha(_text[i]) && !ChanhData::IsVowel(_text[i])) {
             hasConsonantFinal = true;
             break;
         }
@@ -381,7 +381,7 @@ int TelexEngine::FindTonePosition() const {
 
     // Helper: get plain ASCII base of a potentially toned/hooked vowel.
     auto baseVowel = [](wchar_t c) -> wchar_t {
-        return ToLowerViet(CayData::StripAccent(CayData::StripTone(c)));
+        return ToLowerViet(ChanhData::StripAccent(ChanhData::StripTone(c)));
     };
 
     if (count == 2) {
@@ -431,7 +431,7 @@ int TelexEngine::FindTonePosition() const {
 // ---------------------------------------------------------------------------
 void TelexEngine::StripAllTones() {
     for (int i = 0; i < _textLen; i++) {
-        wchar_t stripped = CayData::StripTone(_text[i]);
+        wchar_t stripped = ChanhData::StripTone(_text[i]);
         _text[i] = stripped;
     }
 }
@@ -447,11 +447,11 @@ void TelexEngine::NormalizeTone() {
     // 1. Quét tìm và lột sạch các dấu thanh hiện có trong từ
     for (int i = 0; i < _textLen; i++) {
         wchar_t c = _text[i];
-        wchar_t base = CayData::StripTone(c);
+        wchar_t base = ChanhData::StripTone(c);
         if (base != c) {
             for (int t = 1; t <= 5; t++) {
-                if (CayData::GetToneMark(base, t) == c || 
-                    CayData::GetToneMark(ToLowerViet(base), t) == ToLowerViet(c)) {
+                if (ChanhData::GetToneMark(base, t) == c || 
+                    ChanhData::GetToneMark(ToLowerViet(base), t) == ToLowerViet(c)) {
                     currentTone = t;
                     break;
                 }
@@ -468,7 +468,7 @@ void TelexEngine::NormalizeTone() {
             bool isUpper = (base == ToUpperViet(base) && base != ToLowerViet(base));
             wchar_t baseLo = ToLowerViet(base);
             
-            wchar_t tonedLo = CayData::GetToneMark(baseLo, currentTone);
+            wchar_t tonedLo = ChanhData::GetToneMark(baseLo, currentTone);
             if (tonedLo != L'\0') {
                 _text[targetPos] = isUpper ? ToUpperViet(tonedLo) : tonedLo;
             }
@@ -482,13 +482,13 @@ bool TelexEngine::ApplyDoubleKeys(wchar_t key) {
 
     for (int j = _textLen - 1; j >= 0; j--) {
         wchar_t target = _text[j];
-        wchar_t baseTarget = CayData::StripTone(target);
+        wchar_t baseTarget = ChanhData::StripTone(target);
         wchar_t loBase = ToLowerViet(baseTarget);
         bool isUpper = (ToLowerViet(target) != target) || (target >= L'A' && target <= L'Z');
 
         int tone = 0;
         for (int t = 1; t <= 5; t++) {
-            if (CayData::GetToneMark(baseTarget, t) == target || CayData::GetToneMark(ToLowerViet(baseTarget), t) == ToLowerViet(target)) {
+            if (ChanhData::GetToneMark(baseTarget, t) == target || ChanhData::GetToneMark(ToLowerViet(baseTarget), t) == ToLowerViet(target)) {
                 tone = t; break;
             }
         }
@@ -496,57 +496,57 @@ bool TelexEngine::ApplyDoubleKeys(wchar_t key) {
         // 1. Undo logic
         if (loKey == L'a' && (loBase == L'\u00e2' || loBase == L'\u0103')) {
             wchar_t newBase = isUpper ? L'A' : L'a';
-            _text[j] = tone ? CayData::GetToneMark(newBase, tone) : newBase;
+            _text[j] = tone ? ChanhData::GetToneMark(newBase, tone) : newBase;
             if (_textLen < MAX_BUFFER - 1) { _text[_textLen++] = key; _text[_textLen] = L'\0'; }
             return true;
         }
         if (loKey == L'e' && loBase == L'\u00ea') {
             wchar_t newBase = isUpper ? L'E' : L'e';
-            _text[j] = tone ? CayData::GetToneMark(newBase, tone) : newBase;
+            _text[j] = tone ? ChanhData::GetToneMark(newBase, tone) : newBase;
             if (_textLen < MAX_BUFFER - 1) { _text[_textLen++] = key; _text[_textLen] = L'\0'; }
             return true;
         }
         if (loKey == L'o' && (loBase == L'\u00f4' || loBase == L'\u01a1')) {
             wchar_t newBase = isUpper ? L'O' : L'o';
-            _text[j] = tone ? CayData::GetToneMark(newBase, tone) : newBase;
+            _text[j] = tone ? ChanhData::GetToneMark(newBase, tone) : newBase;
             if (_textLen < MAX_BUFFER - 1) { _text[_textLen++] = key; _text[_textLen] = L'\0'; }
             return true;
         }
         if (loKey == L'd' && loBase == L'\u0111') {
             wchar_t newBase = isUpper ? L'D' : L'd';
-            _text[j] = tone ? CayData::GetToneMark(newBase, tone) : newBase;
+            _text[j] = tone ? ChanhData::GetToneMark(newBase, tone) : newBase;
             if (_textLen < MAX_BUFFER - 1) { _text[_textLen++] = key; _text[_textLen] = L'\0'; }
             return true;
         }
 
         // 2. Apply logic
         if (loKey == L'a' && loBase == L'a') {
-            if (j > 0 && ToLowerViet(CayData::StripTone(_text[j-1])) == L'a') return false; // Chống lặp aaa
+            if (j > 0 && ToLowerViet(ChanhData::StripTone(_text[j-1])) == L'a') return false; // Chống lặp aaa
             wchar_t newBase = isUpper ? L'\u00C2' : L'\u00E2';
-            _text[j] = tone ? CayData::GetToneMark(newBase, tone) : newBase;
+            _text[j] = tone ? ChanhData::GetToneMark(newBase, tone) : newBase;
             return true;
         }
         if (loKey == L'e' && loBase == L'e') {
-            if (j > 0 && ToLowerViet(CayData::StripTone(_text[j-1])) == L'e') return false; // Chống lặp eee
+            if (j > 0 && ToLowerViet(ChanhData::StripTone(_text[j-1])) == L'e') return false; // Chống lặp eee
             wchar_t newBase = isUpper ? L'\u00CA' : L'\u00EA';
-            _text[j] = tone ? CayData::GetToneMark(newBase, tone) : newBase;
+            _text[j] = tone ? ChanhData::GetToneMark(newBase, tone) : newBase;
             return true;
         }
         if (loKey == L'o' && loBase == L'o') {
-            if (j > 0 && ToLowerViet(CayData::StripTone(_text[j-1])) == L'o') return false; // Chống lặp ooo (fix lỗi thoooi)
+            if (j > 0 && ToLowerViet(ChanhData::StripTone(_text[j-1])) == L'o') return false; // Chống lặp ooo (fix lỗi thoooi)
             wchar_t newBase = isUpper ? L'\u00D4' : L'\u00F4';
-            _text[j] = tone ? CayData::GetToneMark(newBase, tone) : newBase;
+            _text[j] = tone ? ChanhData::GetToneMark(newBase, tone) : newBase;
             return true;
         }
         if (loKey == L'd' && loBase == L'd') {
-            if (j > 0 && ToLowerViet(CayData::StripTone(_text[j-1])) == L'd') return false; // Chống lặp ddd
+            if (j > 0 && ToLowerViet(ChanhData::StripTone(_text[j-1])) == L'd') return false; // Chống lặp ddd
             wchar_t newBase = isUpper ? L'\u0110' : L'\u0111';
-            _text[j] = tone ? CayData::GetToneMark(newBase, tone) : newBase;
+            _text[j] = tone ? ChanhData::GetToneMark(newBase, tone) : newBase;
             return true;
         }
         
         // Bỏ qua phụ âm để tìm ngược về nguyên âm trước đó (sửa lỗi gõ xuyên phụ âm như góco -> gốc)
-        if (!CayData::IsVowel(loBase) && loBase != L'd' && loBase != L'\u0111') {
+        if (!ChanhData::IsVowel(loBase) && loBase != L'd' && loBase != L'\u0111') {
             continue;
         }
     }
@@ -558,13 +558,13 @@ bool TelexEngine::ApplyHookKeys(wchar_t key) {
 
     for (int j = _textLen - 1; j >= 0; j--) {
         wchar_t target = _text[j];
-        wchar_t baseTarget = CayData::StripTone(target);
+        wchar_t baseTarget = ChanhData::StripTone(target);
         wchar_t loBase = ToLowerViet(baseTarget);
         bool isUpper = (ToLowerViet(target) != target) || (target >= L'A' && target <= L'Z');
 
         int tone = 0;
         for (int t = 1; t <= 5; t++) {
-            if (CayData::GetToneMark(baseTarget, t) == target || CayData::GetToneMark(ToLowerViet(baseTarget), t) == ToLowerViet(target)) {
+            if (ChanhData::GetToneMark(baseTarget, t) == target || ChanhData::GetToneMark(ToLowerViet(baseTarget), t) == ToLowerViet(target)) {
                 tone = t; break;
             }
         }
@@ -581,65 +581,65 @@ bool TelexEngine::ApplyHookKeys(wchar_t key) {
                 }
             }
             // -----------------------------------------
-            if (loBase == L'\u01a1' && j > 0 && ToLowerViet(CayData::StripTone(_text[j-1])) == L'\u01b0') {
-                wchar_t prevBase = CayData::StripTone(_text[j-1]);
+            if (loBase == L'\u01a1' && j > 0 && ToLowerViet(ChanhData::StripTone(_text[j-1])) == L'\u01b0') {
+                wchar_t prevBase = ChanhData::StripTone(_text[j-1]);
                 bool prevUpper = (ToLowerViet(prevBase) != prevBase) || (prevBase >= L'A' && prevBase <= L'Z');
                 int prevTone = 0;
                 for (int t = 1; t <= 5; t++) {
-                    if (CayData::GetToneMark(prevBase, t) == _text[j-1] || CayData::GetToneMark(ToLowerViet(prevBase), t) == ToLowerViet(_text[j-1])) {
+                    if (ChanhData::GetToneMark(prevBase, t) == _text[j-1] || ChanhData::GetToneMark(ToLowerViet(prevBase), t) == ToLowerViet(_text[j-1])) {
                         prevTone = t; break;
                     }
                 }
                 wchar_t newPrevBase = prevUpper ? L'U' : L'u';
                 wchar_t newCurrBase = isUpper ? L'O' : L'o';
-                _text[j-1] = prevTone ? CayData::GetToneMark(newPrevBase, prevTone) : newPrevBase;
-                _text[j]   = tone ? CayData::GetToneMark(newCurrBase, tone) : newCurrBase;
+                _text[j-1] = prevTone ? ChanhData::GetToneMark(newPrevBase, prevTone) : newPrevBase;
+                _text[j]   = tone ? ChanhData::GetToneMark(newCurrBase, tone) : newCurrBase;
             } else {
                 wchar_t newBase = (loBase == L'\u0103') ? (isUpper ? L'A' : L'a') :
                                   (loBase == L'\u01a1') ? (isUpper ? L'O' : L'o') : (isUpper ? L'U' : L'u');
-                _text[j] = tone ? CayData::GetToneMark(newBase, tone) : newBase;
+                _text[j] = tone ? ChanhData::GetToneMark(newBase, tone) : newBase;
             }
             if (_textLen < MAX_BUFFER - 1) { _text[_textLen++] = key; _text[_textLen] = L'\0'; }
  return true;
         }
 
         // 2. Apply logic
-        if (loBase == L'o' && j > 0 && ToLowerViet(CayData::StripTone(_text[j-1])) == L'u') {
-            wchar_t prevBase = CayData::StripTone(_text[j-1]);
+        if (loBase == L'o' && j > 0 && ToLowerViet(ChanhData::StripTone(_text[j-1])) == L'u') {
+            wchar_t prevBase = ChanhData::StripTone(_text[j-1]);
             bool prevUpper = (ToLowerViet(prevBase) != prevBase) || (prevBase >= L'A' && prevBase <= L'Z');
             int prevTone = 0;
             for (int t = 1; t <= 5; t++) {
-                if (CayData::GetToneMark(prevBase, t) == _text[j-1] || CayData::GetToneMark(ToLowerViet(prevBase), t) == ToLowerViet(_text[j-1])) {
+                if (ChanhData::GetToneMark(prevBase, t) == _text[j-1] || ChanhData::GetToneMark(ToLowerViet(prevBase), t) == ToLowerViet(_text[j-1])) {
                     prevTone = t; break;
                 }
             }
             wchar_t newPrevBase = prevUpper ? L'\u01AF' : L'\u01b0'; // Ư/ư
             wchar_t newCurrBase = isUpper ? L'\u01A0' : L'\u01a1'; // Ơ/ơ
-            _text[j-1] = prevTone ? CayData::GetToneMark(newPrevBase, prevTone) : newPrevBase;
-            _text[j]   = tone ? CayData::GetToneMark(newCurrBase, tone) : newCurrBase;
+            _text[j-1] = prevTone ? ChanhData::GetToneMark(newPrevBase, prevTone) : newPrevBase;
+            _text[j]   = tone ? ChanhData::GetToneMark(newCurrBase, tone) : newCurrBase;
  return true;
         }
-        if (loBase == L'a' && j > 0 && ToLowerViet(CayData::StripTone(_text[j-1])) == L'u') {
-            wchar_t prevBase = CayData::StripTone(_text[j-1]);
+        if (loBase == L'a' && j > 0 && ToLowerViet(ChanhData::StripTone(_text[j-1])) == L'u') {
+            wchar_t prevBase = ChanhData::StripTone(_text[j-1]);
             bool prevUpper = (ToLowerViet(prevBase) != prevBase) || (prevBase >= L'A' && prevBase <= L'Z');
             int prevTone = 0;
             for (int t = 1; t <= 5; t++) {
-                if (CayData::GetToneMark(prevBase, t) == _text[j-1] || CayData::GetToneMark(ToLowerViet(prevBase), t) == ToLowerViet(_text[j-1])) {
+                if (ChanhData::GetToneMark(prevBase, t) == _text[j-1] || ChanhData::GetToneMark(ToLowerViet(prevBase), t) == ToLowerViet(_text[j-1])) {
                     prevTone = t; break;
                 }
             }
             wchar_t newPrevBase = prevUpper ? L'\u01AF' : L'\u01b0'; // Ư/ư
-            _text[j-1] = prevTone ? CayData::GetToneMark(newPrevBase, prevTone) : newPrevBase;
+            _text[j-1] = prevTone ? ChanhData::GetToneMark(newPrevBase, prevTone) : newPrevBase;
  return true;
         }
         
-        wchar_t hookRule = CayData::GetHookRule(baseTarget);
+        wchar_t hookRule = ChanhData::GetHookRule(baseTarget);
         if (hookRule != L'\0') {
-            _text[j] = tone ? CayData::GetToneMark(hookRule, tone) : hookRule;
+            _text[j] = tone ? ChanhData::GetToneMark(hookRule, tone) : hookRule;
  return true;
         }
         
-        if (!CayData::IsVowel(loBase)) {
+        if (!ChanhData::IsVowel(loBase)) {
             continue;
         }
     }
@@ -661,12 +661,12 @@ bool TelexEngine::ApplyToneMarks(int toneIndex) {
     // 1. Identify if the word currently has a tone and where it is
     for (int i = 0; i < _textLen; i++) {
         wchar_t c = _text[i];
-        wchar_t base = CayData::StripTone(c);
+        wchar_t base = ChanhData::StripTone(c);
         if (base != c) {
             tonePos = i;
             for (int t = 1; t <= 5; t++) {
-                if (CayData::GetToneMark(base, t) == c || 
-                    CayData::GetToneMark(ToLowerViet(base), t) == ToLowerViet(c)) {
+                if (ChanhData::GetToneMark(base, t) == c || 
+                    ChanhData::GetToneMark(ToLowerViet(base), t) == ToLowerViet(c)) {
                     currentTone = t;
                     break;
                 }
@@ -678,7 +678,7 @@ bool TelexEngine::ApplyToneMarks(int toneIndex) {
     // 2. Handle 'z' key (toneIndex == 0)
     if (toneIndex == 0) {
         if (currentTone > 0) {
-            _text[tonePos] = CayData::StripTone(_text[tonePos]); // Remove tone
+            _text[tonePos] = ChanhData::StripTone(_text[tonePos]); // Remove tone
             _toneIndex = -1;
 
             return true; // Consumed 'z', do not append it
@@ -688,7 +688,7 @@ bool TelexEngine::ApplyToneMarks(int toneIndex) {
 
     // 3. Handle double-typing the SAME tone key (Undo tone and append raw key)
     if (currentTone == toneIndex) {
-        _text[tonePos] = CayData::StripTone(_text[tonePos]); // Remove tone
+        _text[tonePos] = ChanhData::StripTone(_text[tonePos]); // Remove tone
         _toneIndex = -1;
 
         return false; // Return false so the raw tone key (e.g., 's') gets appended
@@ -701,10 +701,10 @@ bool TelexEngine::ApplyToneMarks(int toneIndex) {
         // Kiểm tra xem chữ gốc có phải là chữ IN HOA không
         bool isUpper = (originalChar == ToUpperViet(originalChar) && originalChar != ToLowerViet(originalChar));
 
-        wchar_t base = CayData::StripTone(originalChar);
+        wchar_t base = ChanhData::StripTone(originalChar);
         wchar_t baseLo = ToLowerViet(base); // Đưa về chữ thường để lấy dấu trong thư viện
 
-        wchar_t tonedLo = CayData::GetToneMark(baseLo, toneIndex);
+        wchar_t tonedLo = ChanhData::GetToneMark(baseLo, toneIndex);
         if (tonedLo != L'\0') {
             // Nâng lên lại IN HOA nếu cần
             _text[targetPos] = isUpper ? ToUpperViet(tonedLo) : tonedLo;
@@ -720,7 +720,7 @@ bool TelexEngine::ApplyToneMarks(int toneIndex) {
 // ---------------------------------------------------------------------------
 // OnKeyDown – main entry point
 // ---------------------------------------------------------------------------
-void TelexEngine::OnKeyDown(CayIME::InputHookManager* sender, CayIME::HookKeyEventArgs& e) {
+void TelexEngine::OnKeyDown(ChanhIME::InputHookManager* sender, ChanhIME::HookKeyEventArgs& e) {
     // 0. Reset state on Navigation or Control keys to prevent buffer desync
     if (e.keyCode == VK_RETURN || e.keyCode == VK_TAB || e.keyCode == VK_ESCAPE ||
        (e.keyCode >= VK_PRIOR && e.keyCode <= VK_DOWN)) { 
@@ -747,13 +747,13 @@ void TelexEngine::OnKeyDown(CayIME::InputHookManager* sender, CayIME::HookKeyEve
 
             _toneIndex = -1;
             for (int i = 0; i < _bufferCount; i++) {
-                int ti = CayData::GetToneIndex(_buffer[i].raw);
+                int ti = ChanhData::GetToneIndex(_buffer[i].raw);
                 if (ti >= 0) _toneIndex = ti;
             }
 
             if (_bufferCount == 0) {
                 ResetState();
-                CayIME::InputInjector::ReplaceText(1, nullptr, 0);
+                ChanhIME::InputInjector::ReplaceText(1, nullptr, 0);
             } else {
                 UpdateScreen(_text, _textLen);
             }
@@ -838,7 +838,7 @@ void TelexEngine::OnKeyDown(CayIME::InputHookManager* sender, CayIME::HookKeyEve
 
     // 5c. Tone mark keys (s f r x j z).
     if (!bypass && !appliedModifier) {
-        int ti = CayData::GetToneIndex(lo);
+        int ti = ChanhData::GetToneIndex(lo);
         if (ti >= 0 && _textLen > 0) {
             if (ApplyToneMarks(ti)) {
                 appliedModifier = true;
@@ -847,7 +847,7 @@ void TelexEngine::OnKeyDown(CayIME::InputHookManager* sender, CayIME::HookKeyEve
     }
 
     // Nếu bị xác định là tiếng Anh (bypass), nhưng trong chữ đang chứa dấu tiếng Việt -> Nhả dấu ngay!
-    if (bypass && CayData::HasVietnameseMark(_text, _textLen)) {
+    if (bypass && ChanhData::HasVietnameseMark(_text, _textLen)) {
         FallbackToRaw();
     }
 
@@ -885,9 +885,9 @@ void TelexEngine::OnKeyDown(CayIME::InputHookManager* sender, CayIME::HookKeyEve
 // ---------------------------------------------------------------------------
 // OnKeyUp – currently unused; reserved for future modifier tracking.
 // ---------------------------------------------------------------------------
-void TelexEngine::OnKeyUp(CayIME::InputHookManager* sender, CayIME::HookKeyEventArgs& e) {
+void TelexEngine::OnKeyUp(ChanhIME::InputHookManager* sender, ChanhIME::HookKeyEventArgs& e) {
     // No-op for now.
     (void)sender; (void)e;
 }
 
-} // namespace Cay
+} // namespace Chanh

@@ -8,7 +8,7 @@ set VERSION=v1.0.0
 set REPO=cronpostps/cay
 
 echo ===================================================
-echo     CAY ENGINE - PUSH ^& ROLLING RELEASE
+echo     CHANH ENGINE - PUSH ^& ROLLING RELEASE
 echo     Phien ban hien tai: %VERSION%
 echo     Target: github.com/%REPO%/releases/tag/latest
 echo ===================================================
@@ -26,21 +26,24 @@ git push
 echo.
 echo [2/3] Dong goi file Release (.zip)...
 :: Đặt tên file ZIP cố định để link tải luôn là một
-set ZIP_NAME=CayEngine_latest.zip
+set ZIP_NAME=ChanhEngine_latest.zip
 if exist temp_release rmdir /s /q temp_release
 mkdir temp_release
-copy "build\Release\cay.exe" temp_release\ >nul
-if exist "build\Release\cay_macros.txt" copy "build\Release\cay_macros.txt" temp_release\ >nul
+
+:: === ĐÃ ĐỔI TÊN THÀNH CHANH ===
+copy "build\Release\chanh.exe" temp_release\ >nul
+if exist "build\Release\chanh_macros.txt" copy "build\Release\chanh_macros.txt" temp_release\ >nul
+if exist "build\Release\chanh_exclude.txt" copy "build\Release\chanh_exclude.txt" temp_release\ >nul
 
 powershell -Command "Compress-Archive -Path 'temp_release\*' -DestinationPath '%ZIP_NAME%' -Force"
 
 echo.
 echo [3/3] Up Release vao tag 'latest'...
-:: Xóa bản release 'latest' cũ trên GitHub (ẩn thông báo lỗi nếu chưa có)
+:: Xóa bản release 'latest' cũ trên GitHub
 gh release delete latest --cleanup-tag -y --repo %REPO% >nul 2>&1
 
-:: Tạo release 'latest' mới, gắn tiêu đề là phiên bản hiện tại
-gh release create latest "%ZIP_NAME%" --repo %REPO% --title "Cay Engine %VERSION%" --notes "%COMMIT_MSG%" --latest
+:: Tạo release 'latest' mới
+gh release create latest "%ZIP_NAME%" --repo %REPO% --title "Chanh Engine %VERSION%" --notes "%COMMIT_MSG%" --latest
 
 :: Chốt chặn an toàn
 if %errorlevel% neq 0 (

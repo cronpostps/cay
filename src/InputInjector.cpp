@@ -4,7 +4,7 @@
 // 1 ZWJ + 64 backspaces + 256 unicode chars = 321 INPUT structs worst case.
 #define MAX_INPUTS 321
 
-namespace CayIME {
+namespace ChanhIME {
 
 // ---------------------------------------------------------------------------
 // Internal helper – fill an INPUT for a Unicode keydown/keyup pair.
@@ -77,4 +77,4 @@ void InputInjector::ReplaceText(int backspaceCount, const wchar_t* newText, int 
     }
 }
 
-} // namespace CayIME
+} // namespace ChanhIME
