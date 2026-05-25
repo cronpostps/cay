@@ -5,7 +5,7 @@ setlocal enabledelayedexpansion
 :: 1. CẤU HÌNH (Sửa VERSION ở đây khi cập nhật)
 :: ==========================================
 set VERSION=v1.0.0
-set REPO=cronpostps/cay
+set REPO=cronpostps/Chanh
 
 echo ===================================================
 echo     CHANH ENGINE - PUSH ^& ROLLING RELEASE
