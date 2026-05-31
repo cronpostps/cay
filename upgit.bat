@@ -62,7 +62,7 @@ if exist "%ZIP_NAME%" del "%ZIP_NAME%"
 
 echo.
 echo ===================================================
-echo [THANH CONG] Moi thu da len mây sach se!
+echo [THANH CONG] Moi thu da len may sach se!
 echo Link tai truc tiep luon luon la:
 echo https://github.com/%REPO%/releases/download/latest/%ZIP_NAME%
 echo ===================================================
