@@ -1,7 +1,7 @@
 # 🍋‍🟩 Chanh — Bộ gõ Telex Tiếng Việt Tối Giản & Mạnh Mẽ
 
 [![Release](https://img.shields.io/github/v/release/cronpostps/chanh?style=flat-square&color=32CD32)](https://github.com/cronpostps/chanh/releases)
-[![Size](https://img.shields.io/badge/size-~265_KB-brightgreen?style=flat-square)](https://github.com/cronpostps/chanh/releases/download/latest/ChanhEngine_latest.zip)
+[![Size](https://img.shields.io/badge/size-~561_KB-brightgreen?style=flat-square)](https://github.com/cronpostps/chanh/releases/download/latest/ChanhEngine_latest.zip)
 [![Platform](https://img.shields.io/badge/platform-Windows-0078d7?style=flat-square)](https://github.com/cronpostps/chanh/releases)
 [![License](https://img.shields.io/badge/license-GPL--3.0-blue?style=flat-square)](LICENSE)
 
@@ -42,13 +42,18 @@ cmake --build build --config Release
 *File build xong sẽ nằm tại build/Release/chanh.exe.*
 
 ## ⌨️ Cách dùng
-1. Chạy file chanh.exe -> app sẽ chạy ngầm dưới khay hệ thống. Để Chanh hoạt động đưọc với các ứng dụng AppContainer, bạn có thể cần chạy nó dưới quyền quản trị (Run as Administrator).
+
+1. Chạy file chanh.exe -> app sẽ chạy ngầm dưới khay hệ thống. Để Chanh hoạt động với các ứng dụng lõi của Windows (eg. MS Edge...), cần chạy nó dưới quyền quản trị (Run as Administrator).
+
 2. Click chuột phải vào biểu tượng dưới khay hệ thống để mở bảng Thiết lập (Thêm Gõ tắt, Thêm App Game cần Bypass, Tự khởi động...).
+
 3. Cú pháp chuẩn Telex: aa=â, oo=ô, ee=ê, dd=đ, w=ă/ư/ơ.
+
 4. Dấu: s=sắc, f=huyền, r=hỏi, x=ngã, j=nặng, z=xoá dấu.
+
 5. Phím tắt Bật/Tắt nhanh: Ctrl + Shift.
 
 ## 📜 License
 [GPL-3.0 License](LICENSE) 
-Mã nguồn gốc © [Cay by tctvn](https://github.com/tctvn/cay).
-Mã nguồn độ © [Chanh by anhnn](https://github.com/cronpostps/chanh).
+- Mã nguồn gốc © [Cay by tctvn](https://github.com/tctvn/cay)
+- Mã nguồn độ © [Chanh by anhnn](https://github.com/cronpostps/chanh)
