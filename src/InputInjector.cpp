@@ -54,10 +54,10 @@ void InputInjector::ReplaceText(int backspaceCount, const wchar_t* newText, int 
     // it never flashes on screen and safely clears any autocomplete selection.
     bool useDummy = (backspaceCount > 0);
     if (useDummy) {
-        FillUnicodeInput(&inputs[idx++], L'a', 0);               // Dummy down
-        FillUnicodeInput(&inputs[idx++], L'a', KEYEVENTF_KEYUP); // Dummy up
+        // Dùng Dấu cách (Space) để ép Chrome ngắt Autocomplete
+        FillUnicodeInput(&inputs[idx++], L' ', 0);               // Dummy down
+        FillUnicodeInput(&inputs[idx++], L' ', KEYEVENTF_KEYUP); // Dummy up
     }
-
     // 2. DELETION (Erase the dummy + the original characters)
     int totalBs = backspaceCount + (useDummy ? 1 : 0);
     for (int i = 0; i < totalBs && idx + 1 < 256; i++) {

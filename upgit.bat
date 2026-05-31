@@ -4,7 +4,7 @@ setlocal enabledelayedexpansion
 :: ==========================================
 :: 1. CẤU HÌNH (Sửa VERSION ở đây khi cập nhật)
 :: ==========================================
-set VERSION=v1.0.0
+set VERSION=v1.0.1
 set REPO=cronpostps/Chanh
 
 echo ===================================================
